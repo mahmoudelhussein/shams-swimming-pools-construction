@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>shams swimming pools construction</title>
+<link rel="icon" type="image/jpeg" href="data/logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+  /* ====== الألوان: غيّرها من هنا بس لتطابق ألوان موقعك القديم ====== */
+  :root{
+    --bg:        #000000;   /* خلفية الصفحة */
+    --bg-2:      #0e0e0e;   /* خلفية الكروت */
+    --primary:   #ff7a00;   /* البرتقالي الأساسي (الأزرار) */
+    --primary-2: #ff9a3c;   /* برتقالي أفتح */
+    --accent:    #ffb347;   /* لون مميز للعدّاد */
+    --text:      #ff8a1f;   /* لون الكلام */
+    --muted:     #c9691a;   /* لون الكلام الثانوي */
+    --line:      rgba(255,122,0,.22);
+    --header-h:  64px;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:"Cairo", system-ui, "Segoe UI", Tahoma, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+  }
+
+  /* ====== الهيدر ====== */
+  header{
+    position:sticky; top:0; z-index:20;
+    height:var(--header-h);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 clamp(14px,4vw,40px);
+    background:rgba(0,0,0,.85);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    display:flex; align-items:center; gap:12px;
+    color:var(--text); text-decoration:none;
+    font-weight:800; font-size:clamp(14px,2.4vw,18px); letter-spacing:.5px;
+  }
+  .brand img{
+    width:38px; height:38px; border-radius:50%; object-fit:cover;
+    border:2px solid var(--primary);
+  }
+  .back{
+    color:var(--bg); background:var(--primary);
+    text-decoration:none; font-weight:600; font-size:14px;
+    padding:8px 18px; border-radius:999px;
+    transition:background .2s, transform .2s;
+  }
+  .back:hover{ background:var(--primary-2); transform:translateX(-3px); }
+
+  /* ====== عنوان الألبوم ====== */
+  .title-bar{
+    max-width:1320px; margin:0 auto;
+    padding:28px clamp(14px,4vw,40px) 6px;
+    display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+  }
+    .title-bar span{ color:var(--muted); font-size:15px; }
+
+  /* ====== المعرض: الشريط على الشمال والصورة الكبيرة على اليمين ====== */
+  .gallery{
+    direction:ltr;                       /* عشان الشريط يبقى شمال فعلاً */
+    max-width:1320px; margin:0 auto;
+    padding:18px clamp(14px,4vw,40px) 48px;
+    display:grid;
+    grid-template-columns:150px minmax(0,1fr);
+    gap:20px;
+    align-items:start;
+  }
+
+  .thumbs{
+    position:sticky; top:calc(var(--header-h) + 18px);
+    max-height:calc(100vh - var(--header-h) - 48px);
+    overflow-y:auto;
+    display:grid; gap:12px;
+    padding:10px;
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:20px;
+    scrollbar-width:thin;
+    scrollbar-color:var(--primary) transparent;
+  }
+  .thumbs::-webkit-scrollbar{ width:6px; }
+  .thumbs::-webkit-scrollbar-thumb{ background:var(--primary); border-radius:6px; }
+
+  .thumbs img{
+    width:100%; aspect-ratio:4/3; object-fit:cover;
+    border-radius:12px; cursor:pointer;
+    opacity:.55; outline:2px solid transparent; outline-offset:2px;
+    transition:opacity .2s, outline-color .2s, transform .2s;
+  }
+  .thumbs img:hover{ opacity:.9; }
+  .thumbs img.active{
+    opacity:1; outline-color:var(--primary);
+    transform:scale(1.03);
+  }
+
+  .main{
+    position:sticky; top:calc(var(--header-h) + 18px);
+    position:sticky;
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:12px;
+    box-shadow:0 30px 60px -30px rgba(255,122,0,.18), 0 0 0 1px rgba(255,122,0,.15);
+  }
+  .frame{
+    position:relative; overflow:hidden; border-radius:16px;
+    background:#060606;
+    display:grid; place-items:center;
+  }
+  #mainImg{
+    display:block; width:100%;
+    max-height:calc(100vh - var(--header-h) - 140px);
+    object-fit:contain;
+    transition:opacity .25s ease;
+  }
+  #mainImg.loading{ opacity:0; }
+
+  .nav{
+    position:absolute; inset:0; pointer-events:none;
+    display:flex; align-items:center; justify-content:space-between; padding:0 14px;
+  }
+  .nav button{
+    pointer-events:auto;
+    width:46px; height:46px; border-radius:50%; border:0; cursor:pointer;
+    font-size:26px; line-height:1; color:var(--text);
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(8px);
+    border:1px solid rgba(255,122,0,.45);
+    transition:background .2s, color .2s, transform .2s;
+  }
+  .nav button:hover{ background:var(--primary); color:var(--bg); transform:scale(1.08); }
+
+  .counter{
+    position:absolute; bottom:14px; left:14px;
+    background:rgba(0,0,0,.75); backdrop-filter:blur(8px);
+    padding:5px 14px; border-radius:999px;
+    font-size:14px; font-weight:600;
+    border:1px solid rgba(255,122,0,.35);
+  }
+  .counter b{ color:var(--accent); }
+
+  button:focus-visible, a:focus-visible, .thumbs img:focus-visible{
+    outline:3px solid var(--accent); outline-offset:3px;
+  }
+
+  /* ====== موبايل: الشريط يتحول لصف أفقي تحت الصورة ====== */
+  @media (max-width:760px){
+    .gallery{ grid-template-columns:1fr; gap:14px; }
+    .main{ position:static; order:1; padding:8px; border-radius:18px; }
+    .thumbs{
+      order:2; position:static; max-height:none;
+      grid-auto-flow:column; grid-auto-columns:92px;
+      overflow-x:auto; overflow-y:hidden;
+      border-radius:16px;
+    }
+    #mainImg{ max-height:60vh; }
+    .nav button{ width:40px; height:40px; font-size:22px; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="pege.html">
+    <img src="data/logo.jpeg" alt="" onerror="this.style.display='none'">
+    SHAMS SWIMMING POOL CONSTRUCTION
+  </a>
+  <a class="back" href="pege.html">← Back</a>
+</header>
+
+<div class="title-bar">
+  <span id="albumCount"></span>
+</div>
+
+<div class="gallery">
+  <div class="thumbs" id="thumbs" aria-label="Thumbnails"></div>
+
+  <div class="main">
+    <div class="frame">
+      <img id="mainImg" alt="Gallery photo">
+      <div class="nav">
+        <button id="prev" aria-label="Previous">‹</button>
+        <button id="next" aria-label="Next">›</button>
+      </div>
+      <div class="counter" id="counter"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // كل ألبوم = مجموعة صور (نفس أسماء الملفات اللي في فولدر data)
+  const albums = {
+    album1: [
+      "data/first pool/1.jpeg","data/first pool/2.jpeg","data/first pool/3.jpeg",
+      "data/first pool/4.jpeg","data/first pool/5.jpeg","data/first pool/6.jpeg",
+      "data/first pool/7.jpeg","data/first pool/8.jpeg","data/first pool/9.jpeg",
+      "data/first pool/10.jpeg","data/first pool/11.jpeg","data/first pool/12.jpeg"
+    ],
+    album2: [
+      "data/sacond pool/1.jpeg","data/sacond pool/2.jpeg","data/sacond pool/3.jpeg",
+      "data/sacond pool/4.jpeg","data/sacond pool/5.jpeg","data/sacond pool/6.jpeg",
+      "data/sacond pool/7.jpeg","data/sacond pool/8.jpeg","data/sacond pool/9.jpeg"
+    ],
+    album3: [
+      "data/thered pool/1.jpeg","data/thered pool/2.jpeg","data/thered pool/3.jpeg",
+      "data/thered pool/4.jpeg","data/thered pool/5.jpeg","data/thered pool/6.jpeg",
+      "data/thered pool/7.jpeg","data/thered pool/8.jpeg","data/thered pool/9.jpeg",
+      "data/thered pool/10.jpeg","data/thered pool/11.jpeg","data/thered pool/12.jpeg"
+    ],
+    album4: [
+      "data/fourth pool/1.jpeg","data/fourth pool/2.jpeg","data/fourth pool/3.jpeg",
+      "data/fourth pool/4.jpeg","data/fourth pool/5.jpeg","data/fourth pool/6.jpeg",
+      "data/fourth pool/7.jpeg","data/fourth pool/8.jpeg","data/fourth pool/9.jpeg",
+      "data/fourth pool/10.jpeg","data/fourth pool/11.jpeg","data/fourth pool/12.jpeg"
+    ],
+    album5: [
+      "data/fivth pool/1.jpeg","data/fivth pool/2.jpeg","data/fivth pool/3.jpeg",
+      "data/fivth pool/4.jpeg","data/fivth pool/5.jpeg","data/fivth pool/6.jpeg",
+      "data/fivth pool/7.jpeg","data/fivth pool/8.jpeg","data/fivth pool/9.jpeg",
+      "data/fivth pool/10.jpeg","data/fivth pool/11.jpeg","data/fivth pool/12.jpeg",
+      "data/fivth pool/13.jpeg"
+    ]
+  };
+
+  // بيقرا اسم الألبوم من اللينك: img.html?album=album2
+  const name = new URLSearchParams(location.search).get("album");
+  const albumKey = albums[name] ? name : "album1";
+  const candidates = albums[albumKey];
+  let images = candidates;
+
+  const thumbs  = document.getElementById("thumbs");
+  const mainImg = document.getElementById("mainImg");
+  const counter = document.getElementById("counter");
+  let current = 0;
+
+  function show(i, scrollThumb = true) {
+    current = (i + images.length) % images.length;
+
+    mainImg.classList.add("loading");
+    const src = images[current];
+    const tmp = new Image();
+    tmp.onload = tmp.onerror = () => {
+      mainImg.src = src;
+      mainImg.classList.remove("loading");
+    };
+    tmp.src = src;
+
+    [...thumbs.children].forEach((t, idx) => t.classList.toggle("active", idx === current));
+    counter.innerHTML = `<b>${current + 1}</b> / ${images.length}`;
+
+    // تمرير الشريط للصورة النشطة بس (من غير ما الصفحة تتحرك)
+    if (scrollThumb) {
+      const a = thumbs.children[current];
+      if (a) {
+        if (getComputedStyle(thumbs).overflowY === "auto") {
+          thumbs.scrollTop = a.offsetTop - thumbs.clientHeight / 2 + a.clientHeight / 2;
+        } else {
+          thumbs.scrollLeft = a.offsetLeft - thumbs.clientWidth / 2 + a.clientWidth / 2;
+        }
+      }
+    }
+  }
+
+  // بيتأكد إن الصورة موجودة، علشان أي رقم ناقص ما يظهرش مكسور
+  function exists(src) {
+    return new Promise(res => {
+      const im = new Image();
+      im.onload = () => res(true);
+      im.onerror = () => res(false);
+      im.src = src;
+    });
+  }
+
+  function build() {
+    document.getElementById("albumCount").textContent = images.length + " photos";
+
+    images.forEach((src, i) => {
+      const t = document.createElement("img");
+      t.src = src;
+      t.alt = "";
+      t.tabIndex = 0;
+      t.onmouseenter = () => show(i, false);   // زي أمازون: بمجرد ما تحط الماوس
+      t.onclick = () => show(i);               // وعلى الموبايل بالضغط
+      t.onkeydown = e => { if (e.key === "Enter") show(i); };
+      thumbs.appendChild(t);
+    });
+
+    document.getElementById("prev").onclick = () => show(current - 1);
+    document.getElementById("next").onclick = () => show(current + 1);
+
+    // أسهم الكيبورد
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowLeft")  show(current - 1);
+      if (e.key === "ArrowRight") show(current + 1);
+    });
+
+    // سحب بالصباع على الموبايل
+    let x0 = null;
+    const frame = document.querySelector(".frame");
+    frame.addEventListener("touchstart", e => x0 = e.touches[0].clientX, {passive:true});
+    frame.addEventListener("touchend", e => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
+      x0 = null;
+    });
+
+    show(0);
+  }
+
+  Promise.all(candidates.map(exists)).then(ok => {
+    const found = candidates.filter((_, i) => ok[i]);
+    if (found.length) images = found;
+    build();
+  });
+</script>
+</body>
+</html>
